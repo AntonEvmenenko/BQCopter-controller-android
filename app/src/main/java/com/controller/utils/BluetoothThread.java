@@ -12,13 +12,12 @@ public class BluetoothThread extends Thread {
     private final BluetoothSocket socket;
     private final InputStream inputStream;
     private final OutputStream outputStream;
-    private final Handler handler;
+    private Handler handler = null;
 
     public static final int MESSAGE_RECEIVED = 1;
 
-    public BluetoothThread( BluetoothSocket socket, Handler handler ) {
+    public BluetoothThread( BluetoothSocket socket ) {
         this.socket = socket;
-        this.handler = handler;
 
         InputStream tempInputStream = null;
         OutputStream tempOutputStream = null;
@@ -41,7 +40,7 @@ public class BluetoothThread extends Thread {
                 try {
                     if (inputStream.available() > 0) {
                         bytes = inputStream.read(buffer);
-                        if (bytes > 0) {
+                        if (bytes > 0 && handler != null) {
                             handler.obtainMessage(MESSAGE_RECEIVED, bytes, -1, buffer).sendToTarget();
                         }
                     } else {
@@ -66,6 +65,7 @@ public class BluetoothThread extends Thread {
         byte[ ] msgBuffer = message.getBytes( );
         try {
             outputStream.write( msgBuffer );
+            outputStream.flush();
         } catch ( IOException e ) { }
     }
 
@@ -74,5 +74,9 @@ public class BluetoothThread extends Thread {
         try {
             socket.close();
         } catch (IOException e) { }
+    }
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
     }
 }

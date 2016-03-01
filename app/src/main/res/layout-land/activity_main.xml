@@ -48,7 +48,7 @@
                 android:text="TUNE"
                 android:id="@+id/tuneButton"
                 android:textSize="13sp"
-                android:enabled="false" />
+                android:enabled="true" />
         </LinearLayout>
 
         <LinearLayout

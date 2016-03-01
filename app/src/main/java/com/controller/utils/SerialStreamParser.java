@@ -21,12 +21,10 @@ public class SerialStreamParser {
 
         String a[ ] = stringBuilder.toString().split( "\n" );
         for (int i = 0; i < a.length; ++i) {
-            if (a[i].length() == DataFormat.BYTES_PER_PACKAGE) {
-                DataFormat data = new DataFormat(a[i]);
+            DataFormat data = new DataFormat(a[i]);
 
-                if (!data.parsingError()) {
-                    result.add(data);
-                }
+            if (!data.parsingError()) {
+                result.add(data);
             }
         }
 
