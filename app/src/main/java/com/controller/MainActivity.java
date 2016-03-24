@@ -17,10 +17,8 @@ import java.util.LinkedList;
 
 import com.controller.utils.BluetoothThread;
 import com.controller.utils.DataFormat;
-import com.controller.utils.MyBluetoothAdapter;
 import com.controller.utils.MyGLSurfaceView;
 import com.controller.utils.RenderingThread;
-import com.controller.utils.SerialStreamParser;
 
 public class MainActivity extends AppCompatActivity {
     private static Handler handler = null;
@@ -121,10 +119,14 @@ public class MainActivity extends AppCompatActivity {
                     LinkedList<DataFormat> data = ((Globals)appContext.getApplicationContext()).getSerialStreamParser().parseStream();
 
                     for (int i = 0; i < data.size(); i++) {
-                        if (data.get(i).getDataSize() == 3) {
-                            mGLView.mRenderer.roll.addPoint(pseudoTime, data.get(i).getData()[0] / 300.0f);
-                            mGLView.mRenderer.pitch.addPoint(pseudoTime, data.get(i).getData()[1] / 300.0f);
-                            mGLView.mRenderer.yaw.addPoint(pseudoTime, data.get(i).getData()[2] / 300.0f);
+                        if (data.get(i).getDataSize() == 1) {
+                            if (data.get(i).getId() == DataFormat.Q2C_CURRENT_ROLL) {
+                                mGLView.mRenderer.roll.addPoint(pseudoTime, data.get(i).getData()[0] / 1.0f);
+                            } else if (data.get(i).getId() == DataFormat.Q2C_CURRENT_PITCH) {
+                                mGLView.mRenderer.pitch.addPoint(pseudoTime, data.get(i).getData()[0] / 1.0f);
+                            } if (data.get(i).getId() == DataFormat.Q2C_CURRENT_YAW) {
+                                mGLView.mRenderer.yaw.addPoint(pseudoTime, data.get(i).getData()[0] / 1.0f);
+                            }
                             pseudoTime += 0.001;
                         }
                     }

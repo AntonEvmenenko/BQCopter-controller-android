@@ -15,21 +15,25 @@ s.length() = 8 + n * 8
 import android.util.Log;
 
 public class DataFormat {
-    public static final short GET_ALL = 1;
+    public static final short C2Q_WANT_ALL = 1;
 
-    public static final short SET_ROLL_P = 2;
-    public static final short SET_ROLL_D = 3;
-    public static final short SET_PITCH_P = 4;
-    public static final short SET_PITCH_D = 5;
-    public static final short SET_YAW_P = 6;
-    public static final short SET_YAW_D = 7;
+    public static final short C2Q_NEW_ROLL_P = 2;
+    public static final short C2Q_NEW_ROLL_D = 3;
+    public static final short C2Q_NEW_PITCH_P = 4;
+    public static final short C2Q_NEW_PITCH_D = 5;
+    public static final short C2Q_NEW_YAW_P = 6;
+    public static final short C2Q_NEW_YAW_D = 7;
 
-    public static final short GOT_ROLL_P = 8;
-    public static final short GOT_ROLL_D = 9;
-    public static final short GOT_PITCH_P = 10;
-    public static final short GOT_PITCH_D = 11;
-    public static final short GOT_YAW_P = 12;
-    public static final short GOT_YAW_D = 13;
+    public static final short Q2C_CURRENT_ROLL_P = 8;
+    public static final short Q2C_CURRENT_ROLL_D = 9;
+    public static final short Q2C_CURRENT_PITCH_P = 10;
+    public static final short Q2C_CURRENT_PITCH_D = 11;
+    public static final short Q2C_CURRENT_YAW_P = 12;
+    public static final short Q2C_CURRENT_YAW_D = 13;
+
+    public static final short Q2C_CURRENT_ROLL = 14;
+    public static final short Q2C_CURRENT_PITCH = 15;
+    public static final short Q2C_CURRENT_YAW = 16;
 
     private static final int MAX_SIZE = 100;
 
@@ -108,7 +112,7 @@ public class DataFormat {
 
             result += current;
         }
-        result += integerToHexString(checksum).substring(4) + "\n";
+        result += integerToHexString(checksum).substring(4) + "#";
         return result;
     }
 

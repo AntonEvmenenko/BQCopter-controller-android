@@ -39,6 +39,14 @@ public class TuneActivity extends AppCompatActivity {
     private Float currentYawP = 0.0f;
     private Float currentYawD = 0.0f;
 
+    private void sendValueIfChanged(Float currentValue, String newValueString, Short id) {
+        boolean newValueExist = !newValueString.equals("");
+        Float newValue = newValueExist ? Float.parseFloat(newValueString) : 0.0f;
+        if (newValueExist && currentValue.compareTo(newValue) != 0) {
+            String message = DataFormat.format(id, newValue);
+            ((Globals)appContext.getApplicationContext()).getBluetoothAdapter().write(message);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,71 +65,23 @@ public class TuneActivity extends AppCompatActivity {
         yawP = (EditText)findViewById(R.id.yawP);
         yawD = (EditText)findViewById(R.id.yawD);
 
-        rollP.clearFocus();
-
         writeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Float currentValue = currentRollP;
-                String newValueString = rollP.getText().toString();
-                boolean newValueExist = !newValueString.equals("");
-                Float newValue = newValueExist ? Float.parseFloat(newValueString) : 0.0f;
-                if (newValueExist && currentValue.compareTo(newValue) != 0) {
-                    String message = DataFormat.format(DataFormat.SET_ROLL_P, newValue);
-                    ((Globals)appContext.getApplicationContext()).getBluetoothAdapter().write(message);
-                }
 
-                currentValue = currentRollD;
-                newValueString = rollD.getText().toString();
-                newValueExist = !newValueString.equals("");
-                newValue = newValueExist ? Float.parseFloat(newValueString) : 0.0f;
-                if (newValueExist && currentValue.compareTo(newValue) != 0) {
-                    String message = DataFormat.format(DataFormat.SET_ROLL_D, newValue);
-                    ((Globals)appContext.getApplicationContext()).getBluetoothAdapter().write(message);
-                }
-
-                currentValue = currentPitchP;
-                newValueString = pitchP.getText().toString();
-                newValueExist = !newValueString.equals("");
-                newValue = newValueExist ? Float.parseFloat(newValueString) : 0.0f;
-                if (newValueExist && currentValue.compareTo(newValue) != 0) {
-                    String message = DataFormat.format(DataFormat.SET_PITCH_P, newValue);
-                    ((Globals)appContext.getApplicationContext()).getBluetoothAdapter().write(message);
-                }
-
-                currentValue = currentPitchD;
-                newValueString = pitchD.getText().toString();
-                newValueExist = !newValueString.equals("");
-                newValue = newValueExist ? Float.parseFloat(newValueString) : 0.0f;
-                if (newValueExist && currentValue.compareTo(newValue) != 0) {
-                    String message = DataFormat.format(DataFormat.SET_PITCH_D, newValue);
-                    ((Globals)appContext.getApplicationContext()).getBluetoothAdapter().write(message);
-                }
-
-                currentValue = currentYawP;
-                newValueString = yawP.getText().toString();
-                newValueExist = !newValueString.equals("");
-                newValue = newValueExist ? Float.parseFloat(newValueString) : 0.0f;
-                if (newValueExist && currentValue.compareTo(newValue) != 0) {
-                    String message = DataFormat.format(DataFormat.SET_YAW_P, newValue);
-                    ((Globals)appContext.getApplicationContext()).getBluetoothAdapter().write(message);
-                }
-
-                currentValue = currentYawD;
-                newValueString = yawD.getText().toString();
-                newValueExist = !newValueString.equals("");
-                newValue = newValueExist ? Float.parseFloat(newValueString) : 0.0f;
-                if (newValueExist && currentValue.compareTo(newValue) != 0) {
-                    String message = DataFormat.format(DataFormat.SET_YAW_D, newValue);
-                    ((Globals)appContext.getApplicationContext()).getBluetoothAdapter().write(message);
-                }
+                sendValueIfChanged(currentRollP, rollP.getText().toString(), DataFormat.C2Q_NEW_ROLL_P);
+                sendValueIfChanged(currentRollD, rollD.getText().toString(), DataFormat.C2Q_NEW_ROLL_D);
+                sendValueIfChanged(currentPitchP, pitchP.getText().toString(), DataFormat.C2Q_NEW_PITCH_P);
+                sendValueIfChanged(currentPitchD, pitchD.getText().toString(), DataFormat.C2Q_NEW_PITCH_D);
+                sendValueIfChanged(currentYawP, yawP.getText().toString(), DataFormat.C2Q_NEW_YAW_P);
+                sendValueIfChanged(currentYawD, yawD.getText().toString(), DataFormat.C2Q_NEW_YAW_D);
             }
         });
 
         readButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String message = DataFormat.format(DataFormat.GET_ALL);
+                String message = DataFormat.format(DataFormat.C2Q_WANT_ALL);
                 ((Globals)appContext.getApplicationContext()).getBluetoothAdapter().write(message);
             }
         });
@@ -138,22 +98,22 @@ public class TuneActivity extends AppCompatActivity {
                         if (data.get(i).getDataSize() == 1) {
                             short id = data.get(i).getId();
                             float value = data.get(i).getData()[0];
-                            if (id == DataFormat.GOT_ROLL_P) {
+                            if (id == DataFormat.Q2C_CURRENT_ROLL_P) {
                                 currentRollP = value;
                                 rollP.setText(String.valueOf(value));
-                            } else if (id == DataFormat.GOT_ROLL_D) {
+                            } else if (id == DataFormat.Q2C_CURRENT_ROLL_D) {
                                 currentRollD = value;
                                 rollD.setText(String.valueOf(value));
-                            } else if (id == DataFormat.GOT_PITCH_P) {
+                            } else if (id == DataFormat.Q2C_CURRENT_PITCH_P) {
                                 currentPitchP = value;
                                 pitchP.setText(String.valueOf(value));
-                            } else if (id == DataFormat.GOT_PITCH_D) {
+                            } else if (id == DataFormat.Q2C_CURRENT_PITCH_D) {
                                 currentPitchD = value;
                                 pitchD.setText(String.valueOf(value));
-                            } else if (id == DataFormat.GOT_YAW_P) {
+                            } else if (id == DataFormat.Q2C_CURRENT_YAW_P) {
                                 currentYawP = value;
                                 yawP.setText(String.valueOf(value));
-                            } else if (id == DataFormat.GOT_YAW_D) {
+                            } else if (id == DataFormat.Q2C_CURRENT_YAW_D) {
                                 currentYawD = value;
                                 yawD.setText(String.valueOf(value));
                             }
@@ -169,6 +129,8 @@ public class TuneActivity extends AppCompatActivity {
         if (((Globals)this.getApplicationContext()).getBluetoothAdapter().connect()) {
             ((Globals)this.getApplicationContext()).getBluetoothAdapter().setHandler(handler);
         }
+
+//        ((Globals)this.getApplicationContext()).getBluetoothAdapter().setHandler(handler);
 
     }
 

@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -19,11 +20,17 @@ public class MyBluetoothAdapter {
 
     private BluetoothThread bluetoothThread = null;
 
+    private boolean connected = false;
+
     public MyBluetoothAdapter() {
 
     }
 
     public boolean connect() {
+        if (connected) {
+            return true;
+        }
+
         if (bluetoothAdapter == null) {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         }
@@ -59,10 +66,16 @@ public class MyBluetoothAdapter {
         bluetoothThread = new BluetoothThread(getBluetoothSocket());
         bluetoothThread.start();
 
+        connected = true;
+
         return true;
     }
 
     public void disconnect() {
+        if (!connected) {
+            return;
+        }
+
         try {
             bluetoothThread.interrupt();
         } catch (Exception e) {}
@@ -70,6 +83,7 @@ public class MyBluetoothAdapter {
         try {
             if (bluetoothSocket != null) {
                 bluetoothSocket.close();
+                connected = false;
             }
         } catch ( IOException e ) { }
     }
@@ -84,6 +98,7 @@ public class MyBluetoothAdapter {
 
     public boolean write(String message) {
         if (bluetoothThread != null) {
+            Log.d("AZAZA", message);
             bluetoothThread.write(message);
             return true;
         }
